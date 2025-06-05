@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('SCM') {
+            steps {
+                git branch: 'main', url: 'https://github.com/sparrshaaa/maven-project.git'
+            }
+        }
+    stage('Build') {
+        steps {
+                bat 'mvn clean install'
+            }
+        }
+    }
+}
