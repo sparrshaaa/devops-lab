@@ -3,7 +3,7 @@ bash
 ------------
 'install ansible on controller'
 ----------------
-sudo hostname ansible-controller
+cat /etc/ansible/ansible.cfg
 ansible-config init --disabled > ansible.cfg
 vi ansible.cfg
 
