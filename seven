@@ -1,0 +1,92 @@
+sudo hostname ansible-controller
+bash
+------------
+'install ansible on controller'
+----------------
+sudo hostname ansible-controller
+ansible-config init --disabled > ansible.cfg
+vi ansible.cfg
+
+sudo mv ansible.cfg /etc/ansible/
+ls
+----------------------
+ssh-keygen -t rsa
+cd .ssh/
+ls
+cat id_rsa.pub     (("copy this and paste it into the client's authorized_keys file."))                  
+                         cd .ssh/
+
+ssh ubuntu@<client-private-ip>
+--------------------
+cd
+mkdir example1
+touch example1/inventory
+vi example1/inventory((( paste the private IP address of client1)))
+cat example1/inventory
+
+example2
+-------------------------
+ansible all -i example1/inventory -i example2/inventory -m ping
+ls
+vi index.html
+touch apache2-install.yml 
+---------------------------
+vi apache2-install.yml
+**********paste everything below*************
+---
+- name: install apache2 on client servers
+  hosts: all
+  become: yes
+  gather_facts: true
+
+  vars:
+    web_server: apache2
+
+  tasks:
+    - name: update cache
+      apt:
+        update_cache: yes
+
+    - name: install apache2
+      apt:
+        name: "{{ web_server }}"
+        state: present
+
+    - name: copy
+      copy:
+        src: index.html
+        dest: /var/www/html/
+      notify: Restart apache2
+
+  handlers:
+    - name: Restart apache2
+      service:
+        name: apache2
+        state: restarted
+
+****************end
+
+cat apache2-install.yml 
+ansible-playbook -i example1/inventory -i example2/inventory apache2-install.yml --syntax-check
+
+ansible-playbook -i example1/inventory -i example2/inventory apache2-install.yml --check
+
+ansible-playbook -i example1/inventory -i example2/inventory apache2-install.yml
+
+-------------------
+sudo -i
+systemctl status apache2
+
+		(((((((((((•	if incase it does not run install the apache2,follow the commands
+		 apt update
+		 apt install apache2 -y
+		 systemctl start apache2
+		 systemctl start apache2))))))))))))))))))
+
+cat /var/www/html/index.html
+
+
+
+
+
+
