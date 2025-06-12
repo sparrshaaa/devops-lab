@@ -11,6 +11,7 @@ cat ~/.ssh/id_rsa.pub
 
 git remote add origin *url-of-rep*
 git remote set-url origin *url-of-rep*
+git remote -v
 git push --set-upstream origin main
 git push
 
