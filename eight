@@ -1,0 +1,97 @@
+***ANSIBLE-SERVER
+mkdir deployment
+cd deployment
+touch deploy.yml 
+touch inventory
+
+deploy.yml:
+---
+- name: deploy to tomcat
+  hosts: tomcat
+  gather_facts: true
+  become: yes
+  tasks:
+    - name: Copy the artifact to the deployment directory
+      copy:
+        src: /home/ubuntu/target/ROOT.war
+        dest: /opt/apache-tomcat-10.1.36/webapps/
+
+
+
+----------------Jenkins install--------------
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+wget https://get.jenkins.io/war-stable/latest/jenkins.war
+java -jar jenkins.war
+
+	if jenkin not open 
+		ps aux | grep Jenkins                (see if jenkin.war is there)
+		nohup java -jar jenkins.war &                   (not there run this)(comeout using ctrl+c)
+		ls (then run 1st one again)(found jar, go refresh)
+
+----------------tomcat install(acs)----------
+sudo apt update
+sudo apt install default-jdk -y
+cd /opt
+ sudo wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.87/bin/apache-tomcat-9.0.87.tar.gz
+sudo tar -xvzf apache-tomcat-9.0.87.tar.gz
+sudo mv apache-tomcat-9.0.87 tomcat
+cd tomcat/bin 
+		[[[[if error	sudo chmod -R +rx /opt/tomcat
+				cd /opt/tomcat/bin
+		]]]
+sudo chmod +x *.sh
+
+------------ansible--------
+sudo apt update
+sudo apt install ansible -y
+ansible --version
+-------------
+Jenkins:8080
+
+server:
+Publish Over SSH 
+system - pem key of J-S -pub ip A-S  ,  ubuntu  , /home/ubuntu
+advanced> pem key 
+Tools - maven 
+
+-------------
+JS (rsa key) -> AS, AS(rsa key) -> ACS
+sudo -i
+ssh-keygen -t rsa
+cd .ssh/
+cat id_rsa.pub
+vi authorized_keys
+
+-------------
+Jenkins Job Creation
+Freestyle, */main, 
+	ADD build>Invoke top level maven target>maven> clean package install
+	ADD post build>”Send build artifacts over SSH” >add  Ansible Server
+	Transfer set>Source file: target/*.war?
+	EXEC COMMAND: sudo ansible-playbook -i /home/ubuntu/inventory/home/ubuntu/deploy.yml
+
+buildnow
+________________
+
+# On Jenkins Server
+ls /var/lib/jenkins/workspace
+ls /var/lib/jenkins/workspace/maven-project
+
+# On Ansible Server
+ls 
+cd target
+ls
+
+# On Ansible Client Server
+cd /opy/apache-tomcat-10.1.36/webapps/
+ls 
+OR
+
+ls /opt/tomcat/webapps/
+
+-----
+•	In browser:
+http://<ansible-client-public-ip>:9090
+
+
